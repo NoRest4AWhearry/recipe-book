@@ -31,7 +31,6 @@ export class ShoppingListAddComponent implements OnChanges {
     } else {
       this.item = newIngredient;
       this.sls.addItem(this.item);
-      this.onClear()
     }
   }
 
