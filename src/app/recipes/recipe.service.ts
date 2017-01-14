@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {Recipe} from "./recipe";
 import {Ingredient} from "../shared/ingredient";
-import {Headers, Http} from "@angular/http";
+import {Headers, Http, Response} from "@angular/http";
+import 'rxjs/Rx';
 
 @Injectable()
 export class RecipeService {
@@ -15,6 +16,8 @@ export class RecipeService {
     new Recipe('Summer Salad', 'Okayish', 'http://cookdiary.net/wp-content/uploads/images/Summer-Salad_17782.jpg', []),
     new Recipe('Hákarl', 'Terrible', 'http://andrewzimmern.com/wp-content/uploads/2015/10/Hakarl-Iceland.jpg', [])
   ];
+
+  private recipesURL: string = 'https://recipebook-69610.firebaseio.com/recipes.json';
 
   constructor(private  http: Http) { }
 
@@ -43,11 +46,16 @@ export class RecipeService {
     const headers = new Headers({
       'Content-Type': 'application/json'
     });
-    const recipesURL = 'https://recipebook-69610.firebaseio.com/recipes.json';
-    return this.http.post(recipesURL, body, {headers: headers});
+    return this.http.put(this.recipesURL, body, {headers: headers});
   }
 
   fetchData() {
-
+    return this.http.get(this.recipesURL)
+      .map((response: Response) => response.json())
+      .subscribe(
+        (data: Recipe[]) => {
+          this.recipes = data;
+        }
+      );
   }
 }
